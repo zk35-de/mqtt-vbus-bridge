@@ -11,6 +11,16 @@ Written in Go. Runs as a rootless Podman/Docker container. Multi-arch (amd64 · 
 
 ---
 
+## Local-first
+
+No cloud account. No vendor gateway. No data leaving your network.
+A standard USB serial adapter (~5 €) replaces a 150 € RESOL gateway.
+You own the hardware, you run the software, you keep the data.
+
+→ [vision.md](vision.md) for the full rationale.
+
+---
+
 ## Web UI
 
 Open `http://<host>:8080` after startup.
@@ -233,7 +243,7 @@ homeassistant/sensor/vbus2mqtt_<src>_<field>/config
 Each sensor in HA gets the correct `device_class` and `state_class` derived from its unit:
 
 | Unit      | device_class        | state_class        |
-|-----------|---------------------|--------------------|
+|-----------|---------------------|---------------------|
 | `°C`, `K` | `temperature`       | `measurement`      |
 | `W`, `kW` | `power`             | `measurement`      |
 | `Wh`, `kWh` | `energy`          | `total_increasing` |
