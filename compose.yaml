@@ -1,9 +1,12 @@
 ---
 # Podman Compose / Docker Compose
 #
-# Quickstart:
+# Quickstart (pull from registry):
 #   cp .env.example .env && $EDITOR .env
 #   docker compose up -d
+#
+# Build locally instead of pulling:
+#   docker compose up -d --build
 #
 # Multi-arch build:
 #   docker buildx build --platform linux/amd64,linux/arm64 \
@@ -12,12 +15,12 @@
 services:
 
   vbus2mqtt:
+    image: ghcr.io/zk35-de/mqtt-vbus-bridge:latest
     build:
       context: .
       dockerfile: Dockerfile
       args:
         VERSION: ${VERSION:-dev}
-    image: vbus2mqtt:latest
     container_name: vbus2mqtt
     restart: unless-stopped
     env_file: .env
