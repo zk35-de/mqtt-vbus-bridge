@@ -15,7 +15,7 @@ jobs:
       - name: Run tests
         run: |
           podman run --rm -v "$PWD":/src:z -w /src \
-            docker.io/library/golang:1.23-alpine \
+            docker.io/library/golang:1.26.3-alpine \
             go test ./...
 
   build:
