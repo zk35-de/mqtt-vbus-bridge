@@ -3,6 +3,9 @@ name: Build & Publish Container
 on:
   push:
     tags: ["v*"]
+  schedule:
+    - cron: "15 3 * * 1"
+  workflow_dispatch:
 
 jobs:
   test:
@@ -27,7 +30,12 @@ jobs:
 
       - name: Set build tag
         id: tag
-        run: echo "value=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            echo "value=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=latest" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Build linux/amd64
         run: |
@@ -35,13 +43,13 @@ jobs:
             --build-arg VERSION=${{ steps.tag.outputs.value }} \
             -t git.zk35.de/secalpha/vbus2mqtt:${{ steps.tag.outputs.value }}-amd64 .
 
-      - name: Build linux/arm/v7 (RPi 3B, 32-bit OS)
+      - name: Build linux/arm/v7
         run: |
           podman build --platform linux/arm/v7 \
             --build-arg VERSION=${{ steps.tag.outputs.value }} \
             -t git.zk35.de/secalpha/vbus2mqtt:${{ steps.tag.outputs.value }}-armv7 .
 
-      - name: Build linux/arm64 (RPi 3B/4/5, 64-bit OS)
+      - name: Build linux/arm64
         run: |
           podman build --platform linux/arm64 \
             --build-arg VERSION=${{ steps.tag.outputs.value }} \
@@ -59,12 +67,14 @@ jobs:
           podman push ${IMAGE}:${TAG}-armv7
           podman push ${IMAGE}:${TAG}-arm64
 
-          podman manifest rm ${IMAGE}:${TAG} 2>/dev/null || podman rmi ${IMAGE}:${TAG} 2>/dev/null || true
-          podman manifest create ${IMAGE}:${TAG} \
-            ${IMAGE}:${TAG}-amd64 \
-            ${IMAGE}:${TAG}-armv7 \
-            ${IMAGE}:${TAG}-arm64
-          podman manifest push ${IMAGE}:${TAG}
+          if [[ "${TAG}" != "latest" ]]; then
+            podman manifest rm ${IMAGE}:${TAG} 2>/dev/null || true
+            podman manifest create ${IMAGE}:${TAG} \
+              ${IMAGE}:${TAG}-amd64 \
+              ${IMAGE}:${TAG}-armv7 \
+              ${IMAGE}:${TAG}-arm64
+            podman manifest push ${IMAGE}:${TAG}
+          fi
 
           podman manifest rm ${IMAGE}:latest 2>/dev/null || podman rmi ${IMAGE}:latest 2>/dev/null || true
           podman manifest create ${IMAGE}:latest \
