@@ -1,6 +1,6 @@
 module github.com/zk35-de/vbus2mqtt
 
-go 1.23
+go 1.26.3
 
 require (
 	github.com/eclipse/paho.mqtt.golang v1.4.3
