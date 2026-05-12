@@ -4,7 +4,7 @@ go 1.23
 
 require (
 	github.com/eclipse/paho.mqtt.golang v1.4.3
-	go.bug.st/serial v1.6.2
+	go.bug.st/serial v1.6.4
 )
 
 require (
