@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # ── Stage 1: build ────────────────────────────────────────────────────────────
-FROM --platform=$BUILDPLATFORM docker.io/library/golang:1.23-alpine AS builder
+FROM --platform=$BUILDPLATFORM docker.io/library/golang:1.26.3-alpine AS builder
 
 ARG TARGETOS
 ARG TARGETARCH
