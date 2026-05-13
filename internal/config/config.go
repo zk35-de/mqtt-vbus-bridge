@@ -45,7 +45,7 @@ func Load() *Config {
 		MQTTUser:        env("MQTT_USER", ""),
 		MQTTPass:        env("MQTT_PASS", ""),
 		MQTTRetain:      envBool("MQTT_RETAIN", true),
-		MQTTQOS:         byte(envInt("MQTT_QOS", 0)),
+		MQTTQOS:         envByte("MQTT_QOS", 0),
 		MQTTHADiscovery:       envBool("MQTT_HA_DISCOVERY", false),
 		MQTTHADiscoveryPrefix: env("MQTT_HA_DISCOVERY_PREFIX", "homeassistant"),
 		PublishInterval: envDuration("PUBLISH_INTERVAL", 30*time.Second),
@@ -78,6 +78,15 @@ func envBool(key string, def bool) bool {
 	if v := os.Getenv(key); v != "" {
 		if b, err := strconv.ParseBool(v); err == nil {
 			return b
+		}
+	}
+	return def
+}
+
+func envByte(key string, def byte) byte {
+	if v := os.Getenv(key); v != "" {
+		if i, err := strconv.ParseUint(v, 10, 8); err == nil {
+			return byte(i)
 		}
 	}
 	return def
